@@ -11,9 +11,9 @@ export const fetchProfileData = () => {
 // a contract like this to integrate with React.
 // Real implementations can be significantly more complex.
 // Don't copy-paste this into your project!
-const wrapPromise = (promise) => {
+const wrapPromise = <T extends any>(promise: Promise<T>) => {
   let status = "pending";
-  let result;
+  let result: T | Error;
   const suspender = promise.then(
     (r) => {
       status = "success";
@@ -23,7 +23,10 @@ const wrapPromise = (promise) => {
       status = "error";
       result = e;
     }
-  );
+  ).catch((e) => {
+    status = "error";
+    result = e;
+  });
   return {
     read() {
       if (status === "pending") {
@@ -36,18 +39,22 @@ const wrapPromise = (promise) => {
     }
   };
 }
-// interface User {
-//   name: string;
-// };
+
+export type Resource<T> = {
+    read(): T | Error | undefined;
+}
+
+export interface User {
+  name: string;
+};
 
 const fetchUser = () => {
-  console.log("fetch user...");
-  return new Promise((resolve, reject) => {
+  return new Promise<User>((resolve, reject) => {
+    const random = Math.floor(Math.random() * 10);
     setTimeout(() => {
-      console.log("fetched user");
-      resolve({
+      random >= 5 ? resolve({
         name: "Ringo Starr"
-      });
+      }) : reject(new Error("error"));
     }, 3000);
   });
 }
@@ -60,46 +67,33 @@ export const fetchU = () => {
   }
 };
 
-// interface PostItem {
-//   id: number;
-//   text: string;
-// };
+export interface PostItem {
+  id: number;
+  text: string;
+};
+
+const posts: PostItem[] = [
+  {
+    id: 0,
+    text: "I get by with a little help from my friends"
+  },
+  {
+    id: 1,
+    text: "I'd like to be under the sea in an octupus's garden"
+  },
+  {
+    id: 2,
+    text: "You got that sand all over your feet"
+  }
+]
 
 const fetchPosts = () => {
-  console.log("fetch posts...");
-  return new Promise((resolve, reject) => {
+  return new Promise<PostItem[]>((resolve, reject) => {
+    const random = Math.floor(Math.random() * 10);
     setTimeout(() => {
-      console.log("fetched posts");
-      reject([
-        {
-          id: 0,
-          text: "I get by with a little help from my friends"
-        },
-        {
-          id: 1,
-          text: "I'd like to be under the sea in an octupus's garden"
-        },
-        {
-          id: 2,
-          text: "You got that sand all over your feet"
-        }
-      ]);
+      random >= 5 ? resolve(posts) : reject(new Error("error"));
     }, 1100);
   });
 }
 
 export const fetchP = () => wrapPromise(fetchPosts());
-
-const fetchInfo = () => {
-  console.log("fetch user...");
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      console.log("fetched user");
-      reject({
-        age: 18
-      });
-    }, 3000);
-  });
-}
-
-export const fetchI = () => wrapPromise(fetchInfo());

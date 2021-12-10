@@ -1,4 +1,11 @@
-function TimeLine({ resource }) {
+import { type FC } from "react";
+import type { PostItem, Resource } from "../fake";
+
+interface Props {
+  resource: Resource<PostItem[]>
+}
+
+const TimeLine: FC<Props> = ({ resource }) => {
   const posts = resource.read();
   return (
     <ul>

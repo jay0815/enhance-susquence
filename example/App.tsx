@@ -1,8 +1,9 @@
-import React from "react";
+import { lazy } from "react";
 import { fetchU, fetchP } from "./fake";
-import EnhanceSusquence from '../../lib/index';
-import User from './components/user';
-import TimeLine from './components/timeline';
+import EnhanceSusquence from '../src/index';
+
+const User = lazy(() => import('./components/user'));
+const TimeLine = lazy(() => import('./components/timeline'));
 
 function App() {
   const user = fetchU();
